@@ -14,16 +14,28 @@ export default function BuyBox() {
   const [launchActive, setLaunchActive] = useState(false);
 
   useEffect(() => {
-    fetch("/api/pricing?quantity=1")
-      .then((res) => res.json())
-      .then((data) => {
-        setLaunchActive(Boolean(data.launchActive));
-        setOrdersRemaining(data.ordersRemaining ?? null);
-      })
-      .catch(() => {
-        // Pricing display falls back to normal prices; checkout still
-        // computes the real price server-side.
-      });
+    // cache: "no-store" stops Safari serving a stale counter; refresh
+    // every 60s and on tab refocus so the number stays live.
+    function loadPricing() {
+      fetch("/api/pricing?quantity=1", { cache: "no-store" })
+        .then((res) => res.json())
+        .then((data) => {
+          setLaunchActive(Boolean(data.launchActive));
+          setOrdersRemaining(data.ordersRemaining ?? null);
+        })
+        .catch(() => {
+          // Pricing display falls back to normal prices; checkout still
+          // computes the real price server-side.
+        });
+    }
+    loadPricing();
+    const interval = setInterval(loadPricing, 60_000);
+    const onFocus = () => loadPricing();
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, []);
 
   const pricing = getPricing(quantity, launchActive ? 0 : null);
