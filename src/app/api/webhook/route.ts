@@ -41,6 +41,17 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
+
+      // The Stripe account is shared with other shops (Togogo, Mathly),
+      // so this endpoint receives THEIR checkout events too. Only store
+      // sessions our checkout created (tagged in metadata) — otherwise
+      // foreign orders would pollute the table and burn the
+      // launch-special counter.
+      if (session.metadata?.product !== "ShadeMate") {
+        console.log("Ignoring non-ShadeMate session:", session.id);
+        break;
+      }
+
       const quantity = Number(session.metadata?.quantity) || 1;
       const amountTotal = session.amount_total ?? 0;
       const shippingCents =
