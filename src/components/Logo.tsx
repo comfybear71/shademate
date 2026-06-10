@@ -1,19 +1,20 @@
 import Image from "next/image";
 
 /**
- * Real ShadeMate logo (public/images/logo.jpg). Swap the file to update
- * the logo everywhere — header and footer both use this component.
+ * ShadeMate vector logo (public/images/logo.svg) — crisp at any size,
+ * transparent background. Prefer the uploaded artwork instead? Point
+ * src at "/images/logo.jpg".
  */
 export default function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center ${className}`}>
       <Image
-        src="/images/logo.jpg"
-        alt="Aussie ShadeMate — Protect your cool"
-        width={1264}
-        height={816}
+        src="/images/logo.svg"
+        alt="ShadeMate — Your aircon's best mate"
+        width={640}
+        height={400}
         priority
-        className="h-12 w-auto"
+        className="h-14 w-auto"
       />
     </span>
   );

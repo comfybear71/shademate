@@ -4,12 +4,12 @@
 
 ## Current state (as of 2026-06-10)
 
-**Status:** ✅ Full site built, production build passing, pushed to
-`claude/shademate-ecommerce-build-7780kf`. Not yet merged to master,
-not yet deployed to Vercel.
+**Status:** ✅ v1.0 merged, tagged (`v1.0-2026-06-10`), released and
+deployed on Vercel with "Protect Master" ruleset active. PR #2 (promo)
+merged. Branch `claude/shademate-ecommerce-build-7780kf` still carries:
+real photos/videos/logo + vector logo + favicon — needs one more PR.
 
-The site is feature-complete for launch pending: Stripe keys, product
-photos, and the PR merge.
+Launch pending: final PR merge, Stripe keys in Vercel, webhook endpoint.
 
 ## Session log
 
@@ -67,18 +67,31 @@ Built the entire site from scratch:
   photo grid in a 2-up row (`product.videos` in config)
 - NOTE: PR #2 (this branch → master) now contains promo + media + logo
 
+### 2026-06-10 (night) — Branding locked in: "ShadeMate / Your aircon's best mate."
+
+- Owner decision: site branding wins — **ShadeMate** with tagline
+  **"Your aircon's best mate."** (not the "Aussie Shade Mate / Protect
+  Your Cool" wording on the Grok logo art)
+- Hand-built vector logo at `public/images/logo.svg` with the chosen
+  wording; header/footer now use it (swap back to `logo.jpg` in
+  `src/components/Logo.tsx` if owner prefers the Grok art)
+- Favicon added at `src/app/icon.svg` (sun-over-Uluru mark)
+- Resolved PR merge conflict in HANDOFF.md (squash of PR #2 rewrote
+  history; kept branch version)
+- NOTE: the physical cover in the product photos still prints "Aussie
+  Shade Mate / Protect Your Cool" — owner to decide on print artwork
+
 ## Next steps
 
-1. Owner: open + merge the PR (link in session notes), then on GitHub web:
-   - Add "Protect Master" ruleset (shademate is NOT yet on the Master
-     repo's 8-repo protection checklist — add it there too)
-   - Draft release: tag `v1.0-2026-06-10`, target master
-2. Owner: create Vercel project, point shademate.xyz, add the 4 env vars
-3. Owner: new Stripe account (or reuse AIG!itch account) → keys into
-   Vercel → add webhook endpoint `https://shademate.xyz/api/webhook` for
-   `checkout.session.completed` → put `whsec_...` into Vercel → redeploy
-4. Owner: drop product photos into `public/images/`
-   (`product-1.jpg`…`product-6.jpg` + `og-image.jpg` 1200×630)
-5. Owner: confirm/replace contact email in `src/config/site.ts`
-6. Future session: wire order-notification email into the webhook handler;
-   replace placeholder reviews with real Google reviews
+1. Owner: merge the final media+logo PR, delete branch, tag
+   `v1.1-2026-06-10` (add shademate to the Master repo's protection
+   checklist if not done)
+2. Owner: Stripe keys into Vercel env vars → add webhook endpoint
+   `https://shademate.xyz/api/webhook` for `checkout.session.completed`
+   → put `whsec_...` into Vercel → redeploy
+3. Owner: confirm/replace contact email in `src/config/site.ts`
+4. Owner: set a genuine RRP in the `sale` config block (ACCC) or flip
+   `sale.enabled = false` until pricing history is established
+5. Future session: wire order-notification email into the webhook handler;
+   replace placeholder reviews with real Google reviews; decide print
+   artwork branding for the physical cover
