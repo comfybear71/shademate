@@ -86,12 +86,36 @@ export default function BuyBox() {
           </div>
 
           {launchActive && (
-            <p className="mt-2 inline-flex items-center gap-2 rounded-lg bg-yellow-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-red-700 ring-1 ring-yellow-300">
-              🔥 {product.launchSpecial.label}
-              {ordersRemaining !== null && ordersRemaining <= 50 && (
-                <span>· only {ordersRemaining} left!</span>
+            <div className="mt-2 rounded-lg bg-yellow-100 px-3 py-2 ring-1 ring-yellow-300">
+              <p className="text-sm font-extrabold uppercase tracking-wide text-red-700">
+                🔥 Launch special
+                {ordersRemaining !== null
+                  ? ` — only ${ordersRemaining} of ${product.launchSpecial.maxOrders} left!`
+                  : ` — first ${product.launchSpecial.maxOrders} orders only`}
+              </p>
+              {ordersRemaining !== null && (
+                <div
+                  className="mt-1.5 h-2 overflow-hidden rounded-full bg-yellow-200"
+                  role="progressbar"
+                  aria-label="Launch specials claimed"
+                  aria-valuemin={0}
+                  aria-valuemax={product.launchSpecial.maxOrders}
+                  aria-valuenow={product.launchSpecial.maxOrders - ordersRemaining}
+                >
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-sun-500 to-red-600 transition-all duration-700"
+                    style={{
+                      width: `${Math.max(
+                        3,
+                        ((product.launchSpecial.maxOrders - ordersRemaining) /
+                          product.launchSpecial.maxOrders) *
+                          100,
+                      )}%`,
+                    }}
+                  />
+                </div>
               )}
-            </p>
+            </div>
           )}
 
           {/* Multi-buy deals */}
