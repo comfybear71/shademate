@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import PromoBanner from "@/components/PromoBanner";
 import Hero from "@/components/Hero";
 import TrustBanner from "@/components/TrustBanner";
 import Gallery from "@/components/Gallery";
@@ -66,6 +67,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
+      <PromoBanner />
       <Header />
       <main>
         <Hero />
