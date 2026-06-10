@@ -30,6 +30,15 @@ const config: Config = {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
       },
+      keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-8deg) scale(1)" },
+          "50%": { transform: "rotate(-12deg) scale(1.06)" },
+        },
+      },
+      animation: {
+        wiggle: "wiggle 2.5s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

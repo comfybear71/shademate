@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { product, formatAud } from "@/config/site";
+import {
+  product,
+  formatAud,
+  sale,
+  saleSavings,
+  saleSavingsPercent,
+} from "@/config/site";
+import Starburst from "./Starburst";
 
 export default function BuyBox() {
   const [quantity, setQuantity] = useState(1);
@@ -35,7 +42,13 @@ export default function BuyBox() {
   return (
     <section id="buy" className="bg-gradient-to-b from-white to-ocean-50/60 py-16 sm:py-20">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        <div className="rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-100 sm:p-10">
+        <div className="relative rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-100 sm:p-10">
+          {sale.enabled && (
+            <Starburst
+              lines={["SAVE", formatAud(saleSavings()), `${saleSavingsPercent()}% OFF`]}
+              className="absolute -right-4 -top-8 h-28 w-28 animate-wiggle drop-shadow-lg sm:-right-8 sm:-top-10 sm:h-32 sm:w-32"
+            />
+          )}
           <p className="inline-flex rounded-full bg-sun-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sun-600">
             Free of fuss · Flat-rate shipping
           </p>
@@ -47,14 +60,27 @@ export default function BuyBox() {
           </p>
           <p className="mt-2 text-xs text-slate-500">{product.dimensions}</p>
 
-          <div className="mt-6 flex items-end gap-2">
-            <span className="font-display text-4xl font-extrabold text-slate-900">
+          <div className="mt-6 flex flex-wrap items-end gap-x-3 gap-y-1">
+            {sale.enabled && (
+              <span className="pb-1 text-xl font-semibold text-slate-400 line-through decoration-red-500 decoration-2">
+                {formatAud(sale.rrpAud)}
+              </span>
+            )}
+            <span
+              className={`font-display text-5xl font-extrabold ${sale.enabled ? "text-red-600" : "text-slate-900"}`}
+            >
               {formatAud(product.priceAud)}
             </span>
             <span className="pb-1 text-sm text-slate-500">
               AUD + {formatAud(product.shippingAud)} flat-rate shipping
             </span>
           </div>
+          {sale.enabled && (
+            <p className="mt-2 inline-flex items-center gap-2 rounded-lg bg-yellow-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-red-700 ring-1 ring-yellow-300">
+              ⚡ {sale.badgeText} — save {formatAud(saleSavings())} (
+              {saleSavingsPercent()}% off)
+            </p>
+          )}
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center rounded-full ring-1 ring-slate-200">
@@ -101,6 +127,12 @@ export default function BuyBox() {
           {error && (
             <p role="alert" className="mt-4 text-sm font-semibold text-red-600">
               {error}
+            </p>
+          )}
+
+          {sale.enabled && (
+            <p className="mt-4 text-center text-sm font-bold text-red-600">
+              🔥 {sale.bannerText}
             </p>
           )}
 

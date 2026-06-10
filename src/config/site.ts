@@ -61,6 +61,48 @@ export const product = {
   ],
 } as const;
 
+/**
+ * ── Limited-offer / sale promo ────────────────────────────────────────
+ * Controls the QVC-style promo treatment: starburst badges, was/now
+ * pricing and the limited-offer banner. Flip `enabled` to false to turn
+ * the whole lot off site-wide.
+ *
+ * ⚠️ ACCC compliance: only show a was/now saving if the product genuinely
+ * sold at `rrpAud` for a reasonable period (or it's a true RRP). Fake
+ * "was" prices are misleading two-price advertising under Australian
+ * Consumer Law.
+ */
+export const sale = {
+  enabled: true,
+
+  /** The "was" price in AUD. Customers pay product.priceAud. */
+  rrpAud: 69.95,
+
+  /** Short shouty label on the starburst, e.g. "LAUNCH SPECIAL". */
+  badgeText: "LAUNCH SPECIAL",
+
+  /** Banner across the top of the site. */
+  bannerText: "Limited launch offer — grab yours before they're gone!",
+
+  /**
+   * Optional offer end date/time (ISO format, AEST is +10:00) — shows a
+   * live countdown in the banner when set. Leave as "" for no countdown.
+   * Example: "2026-06-30T23:59:59+10:00"
+   */
+  endsAt: "",
+};
+
+/** Dollars saved vs RRP while the sale is on. */
+export function saleSavings(): number {
+  return Math.max(0, sale.rrpAud - product.priceAud);
+}
+
+/** Percentage saved vs RRP, rounded, e.g. 29. */
+export function saleSavingsPercent(): number {
+  if (sale.rrpAud <= 0) return 0;
+  return Math.round((saleSavings() / sale.rrpAud) * 100);
+}
+
 /** Placeholder reviews — replace with your real Google reviews. */
 export const reviews = [
   {

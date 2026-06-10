@@ -42,6 +42,20 @@ Built the entire site from scratch:
   regardless — secrets are per-endpoint.
 - Contact email placeholder: `hello@shademate.xyz` (owner to confirm)
 
+### 2026-06-10 (later) — QVC-style promo treatment (same branch)
+
+- New `sale` config block in `src/config/site.ts`: enabled flag, RRP
+  ($69.95 → customers pay $49.95 = save $20 / 29%), badge text, banner
+  text, optional `endsAt` countdown date. Includes ACCC note: the "was"
+  price must be genuine (no fake two-price advertising).
+- `Starburst.tsx` — classic red retail price-burst SVG badge, wiggle
+  animation; on the hero CTA and the buy box
+- `PromoBanner.tsx` — red/orange banner above header with SAVE chip and
+  optional live countdown (set `sale.endsAt` to activate)
+- BuyBox: strikethrough RRP, red sale price, savings chip, urgency line
+- Flip `sale.enabled = false` to turn the whole promo off site-wide
+- Verified: build clean, all promo elements render
+
 ## Next steps
 
 1. Owner: open + merge the PR (link in session notes), then on GitHub web:

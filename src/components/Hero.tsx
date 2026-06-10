@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { siteConfig } from "@/config/site";
+import { siteConfig, sale, saleSavings, formatAud } from "@/config/site";
+import Starburst from "./Starburst";
 
 export default function Hero() {
   return (
@@ -27,12 +28,20 @@ export default function Hero() {
           it runs cooler and lasts longer. Delivered Australia wide.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="/#buy"
-            className="rounded-full bg-sun-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-sun-500/30 transition hover:bg-sun-600"
-          >
-            Get Yours Now
-          </Link>
+          <span className="relative inline-flex">
+            {sale.enabled && (
+              <Starburst
+                lines={["SAVE", formatAud(saleSavings())]}
+                className="absolute -right-12 -top-12 h-20 w-20 animate-wiggle drop-shadow-lg sm:-right-16 sm:h-24 sm:w-24"
+              />
+            )}
+            <Link
+              href="/#buy"
+              className="rounded-full bg-sun-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-sun-500/30 transition hover:bg-sun-600"
+            >
+              Get Yours Now
+            </Link>
+          </span>
           <Link
             href="/#how-it-works"
             className="rounded-full px-8 py-4 text-lg font-semibold text-ocean-700 ring-1 ring-ocean-200 transition hover:bg-ocean-50"
