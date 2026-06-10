@@ -48,16 +48,33 @@ export const product = {
   maxQuantity: 10,
 
   /**
-   * Gallery images — drop files into /public/images/ and list them here.
-   * Slots without a real file yet render as styled placeholders.
+   * Gallery images — files live in /public/images/. Slots without a real
+   * file render as styled placeholders.
    */
   images: [
-    { src: "/images/product-1.jpg", alt: "ShadeMate cover fitted on an outdoor aircon unit" },
-    { src: "/images/product-2.jpg", alt: "Close-up of ShadeMate reflective material" },
-    { src: "/images/product-3.jpg", alt: "ShadeMate securing strap detail" },
-    { src: "/images/product-4.jpg", alt: "ShadeMate on a unit in full sun" },
-    { src: "/images/product-5.jpg", alt: "Aircon unit airflow staying clear with ShadeMate fitted" },
-    { src: "/images/product-6.jpg", alt: "ShadeMate folded for delivery" },
+    { src: "/images/product-1.jpg", alt: "Branded ShadeMate cover with Aussie Shade Mate logo fitted on an outdoor aircon unit" },
+    { src: "/images/product-2.jpg", alt: "Top view of the reflective ShadeMate cover on a split-system outdoor unit" },
+    { src: "/images/product-3.jpg", alt: "ShadeMate reflective cover fitted with the fan and vents completely clear" },
+    { src: "/images/product-4.jpg", alt: "Two outdoor aircon units side by side wearing ShadeMate covers" },
+    { src: "/images/product-5.jpg", alt: "ShadeMate suits wall-mounted, ground and apartment split-system units" },
+  ],
+
+  /**
+   * Gallery videos — shown below the photos. Files live in /public/images/.
+   * The poster is the thumbnail shown before play (needed on iPhones,
+   * which otherwise show a blank box).
+   */
+  videos: [
+    {
+      src: "/images/video-1.mp4",
+      poster: "/images/video-1-poster.jpg",
+      title: "Fitting ShadeMate on an outdoor unit",
+    },
+    {
+      src: "/images/video-2.mp4",
+      poster: "/images/video-2-poster.jpg",
+      title: "ShadeMate installed in under a minute",
+    },
   ],
 } as const;
 
