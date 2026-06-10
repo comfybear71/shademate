@@ -16,6 +16,24 @@ import { formatAud } from "@/config/site";
  * still stored in the database and visible in Stripe).
  */
 
+/**
+ * Builds a valid Resend `from` value even if the env var lost its angle
+ * brackets in the Vercel UI (e.g. "ShadeMate Orders orders@shademate.xyz"
+ * becomes "ShadeMate Orders <orders@shademate.xyz>").
+ */
+function fromAddress(): string {
+  const fallback = "ShadeMate Orders <onboarding@resend.dev>";
+  const raw = process.env.ORDER_EMAILS_FROM?.trim();
+  if (!raw) return fallback;
+  // Already correctly formatted: Name <email@domain>
+  if (/<[^<>\s]+@[^<>\s]+>/.test(raw)) return raw;
+  const match = raw.match(/[^\s<>"]+@[^\s<>"]+/);
+  if (!match) return fallback;
+  const email = match[0];
+  const name = raw.replace(email, "").replace(/[<>"]/g, "").trim();
+  return name ? `${name} <${email}>` : email;
+}
+
 interface OrderEmail {
   sessionId: string;
   name: string | null;
@@ -57,9 +75,7 @@ export async function sendOrderNotification(order: OrderEmail): Promise<void> {
   // With shademate.xyz verified in Resend, set ORDER_EMAILS_FROM to e.g.
   // "ShadeMate Orders <orders@shademate.xyz>". The resend.dev fallback
   // works without verification but only delivers to your own account email.
-  const from =
-    process.env.ORDER_EMAILS_FROM ??
-    "ShadeMate Orders <onboarding@resend.dev>";
+  const from = fromAddress();
 
   const address = formatAddress(order.shippingAddress);
   const total = formatAud(order.totalCents / 100);
