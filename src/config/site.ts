@@ -34,11 +34,37 @@ export const product = {
   description:
     "Reflective, non-flammable cover for split-system outdoor air conditioner units. Shields the top of your unit from sun, dust, leaves and bird droppings without blocking airflow — helping your unit run more efficiently by reflecting heat. Fits in under a minute, no tools needed.",
 
-  /** Price in whole AUD dollars. Change it here, done. */
+  /**
+   * Normal price in AUD dollars (1–2 units). Multi-buy deals below in
+   * `bundles`; intro pricing in `launchSpecial`.
+   */
   priceAud: 25,
 
   /** Flat-rate shipping in whole AUD dollars (Australia wide). */
   shippingAud: 9.95,
+
+  /**
+   * Multi-buy deals, best deal first. Quantity picks the first row it
+   * qualifies for: 5+ = $20/unit + FREE postage, 3-4 = $20/unit,
+   * otherwise the normal price above.
+   */
+  bundles: [
+    { minQty: 5, unitPriceAud: 20, freeShipping: true, label: "5 for $100 + FREE postage" },
+    { minQty: 3, unitPriceAud: 20, freeShipping: false, label: "3 for $60" },
+  ],
+
+  /**
+   * Intro deal: this unit price applies until `maxOrders` orders exist in
+   * the database, then pricing reverts to normal automatically. Needs
+   * DATABASE_URL set (Neon) — without a database the site safely falls
+   * back to normal pricing. The 5+ free-postage rule still applies.
+   */
+  launchSpecial: {
+    enabled: true,
+    unitPriceAud: 15.99,
+    maxOrders: 100,
+    label: "Launch special — first 100 orders only",
+  },
 
   currency: "AUD",
 

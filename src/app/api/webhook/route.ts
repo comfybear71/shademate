@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
+import { insertOrder } from "@/lib/db";
 
 /**
  * Stripe webhook endpoint — point your Stripe webhook at
  * https://shademate.xyz/api/webhook and listen for
- * `checkout.session.completed`.
+ * `checkout.session.completed`. Each paid order is stored in the
+ * Neon `orders` table (which also drives the launch-special counter).
  */
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -39,19 +41,34 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      // Order confirmed and paid. Stripe emails the customer a receipt if
-      // enabled in your dashboard (Settings → Emails). Hook in order
-      // fulfilment here — e.g. email yourself, push to a spreadsheet or
-      // fulfilment service.
-      console.log("✅ Order received:", {
-        sessionId: session.id,
-        amountTotal: session.amount_total,
-        currency: session.currency,
-        customerEmail: session.customer_details?.email,
-        customerName: session.customer_details?.name,
-        shipping: session.shipping_details,
-        quantity: session.metadata?.quantity,
-      });
+      const quantity = Number(session.metadata?.quantity) || 1;
+      const amountTotal = session.amount_total ?? 0;
+      const shippingCents =
+        session.shipping_cost?.amount_total ?? 0;
+
+      try {
+        await insertOrder({
+          stripeSessionId: session.id,
+          email: session.customer_details?.email ?? null,
+          name: session.customer_details?.name ?? null,
+          phone: session.customer_details?.phone ?? null,
+          shippingAddress: session.shipping_details ?? null,
+          quantity,
+          unitPriceCents: Math.round((amountTotal - shippingCents) / quantity),
+          amountTotalCents: amountTotal,
+          currency: session.currency ?? "aud",
+          launchSpecial: session.metadata?.launch_special === "true",
+        });
+        console.log("✅ Order stored:", session.id, {
+          email: session.customer_details?.email,
+          quantity,
+          total: amountTotal,
+        });
+      } catch (err) {
+        // Log loudly but still 200 — the payment succeeded; the order is
+        // recoverable from the Stripe dashboard if the insert failed.
+        console.error("⚠️ Order insert failed for", session.id, err);
+      }
       break;
     }
     case "checkout.session.expired":

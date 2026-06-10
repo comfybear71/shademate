@@ -95,17 +95,38 @@ Built the entire site from scratch:
   - Fulfilment: owner has a separate dropshipping business that can ship
     orders manually from the webhook order emails — no integration needed
 
+### 2026-06-10 (later) — Pricing tiers, Neon DB, order storage (branch: `claude/stripe-neon-orders`)
+
+- PR #4 (price $25) confirmed merged; owner deferred tagging until next
+  milestone
+- New pricing system, single source of truth in `src/lib/pricing.ts`:
+  - Launch special: **$15.99/unit for the first 100 orders** (counted
+    from the DB), then automatically reverts to normal
+  - Normal: $25 (1–2) · **3 for $60** ($20/unit) · **5 for $100 + FREE
+    postage**
+  - All editable in `product.bundles` / `product.launchSpecial` in config
+- Neon Postgres via `@neondatabase/serverless` (`src/lib/db.ts`):
+  `orders` table auto-created on first use, webhook inserts each paid
+  order (idempotent on session id), `fulfilled` column ready for later
+- `/api/pricing` returns live pricing; BuyBox shows launch starburst,
+  deal chips, qty summary with free-postage callout
+- Checkout computes authoritative price server-side; deal name shown on
+  the Stripe Checkout line item; metadata carries qty/price/special
+- **No DB = safe fallback to normal pricing** (intro deal never shown if
+  orders can't be counted)
+- Decision: NO Stripe dashboard products/coupons — everything in code
+
 ## Next steps
 
-1. Owner: merge the final media+logo PR, delete branch, tag
-   `v1.1-2026-06-10` (add shademate to the Master repo's protection
-   checklist if not done)
-2. Owner: Stripe keys into Vercel env vars → add webhook endpoint
-   `https://shademate.xyz/api/webhook` for `checkout.session.completed`
-   → put `whsec_...` into Vercel → redeploy
-3. Owner: confirm/replace contact email in `src/config/site.ts`
-4. Owner: set a genuine RRP in the `sale` config block (ACCC) or flip
-   `sale.enabled = false` until pricing history is established
-5. Future session: wire order-notification email into the webhook handler;
-   replace placeholder reviews with real Google reviews; decide print
-   artwork branding for the physical cover
+1. Owner: merge `claude/stripe-neon-orders` PR after preview test
+2. Owner: connect Neon to the Vercel project (Vercel → Storage → Neon)
+   so DATABASE_URL is injected, update Stripe env vars to the new shop's
+   keys, add webhook endpoint `https://shademate.xyz/api/webhook` for
+   `checkout.session.completed`, put the new `whsec_...` in Vercel,
+   redeploy
+3. Test the full loop with Stripe TEST keys first: checkout → pay with
+   4242 4242 4242 4242 → success page → order row appears in Neon
+4. Owner: confirm/replace contact email in `src/config/site.ts`
+5. Future session: order-notification email from the webhook (fulfilment
+   hand-off to dropship business); simple orders dashboard; real Google
+   reviews; print artwork branding decision
