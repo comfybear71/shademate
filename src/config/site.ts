@@ -59,10 +59,22 @@ export const product = {
     { src: "/images/product-5.jpg", alt: "ShadeMate suits wall-mounted, ground and apartment split-system units" },
   ],
 
-  /** Gallery videos — shown below the photos. Files live in /public/images/. */
+  /**
+   * Gallery videos — shown below the photos. Files live in /public/images/.
+   * The poster is the thumbnail shown before play (needed on iPhones,
+   * which otherwise show a blank box).
+   */
   videos: [
-    { src: "/images/video-1.mp4", title: "ShadeMate in action" },
-    { src: "/images/video-2.mp4", title: "Fitting your ShadeMate" },
+    {
+      src: "/images/video-1.mp4",
+      poster: "/images/video-1-poster.jpg",
+      title: "Fitting ShadeMate on an outdoor unit",
+    },
+    {
+      src: "/images/video-2.mp4",
+      poster: "/images/video-2-poster.jpg",
+      title: "ShadeMate installed in under a minute",
+    },
   ],
 } as const;
 

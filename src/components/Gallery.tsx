@@ -68,6 +68,7 @@ export default function Gallery() {
                 muted
                 playsInline
                 preload="metadata"
+                poster={video.poster}
                 className="h-full w-full"
                 aria-label={video.title}
               >
