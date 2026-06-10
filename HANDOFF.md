@@ -2,14 +2,23 @@
 
 > Sacred file — NEVER delete. Update at the end of every session.
 
-## Current state (as of 2026-06-10)
+## Current state (as of 2026-06-10, end of session)
 
-**Status:** ✅ v1.0 merged, tagged (`v1.0-2026-06-10`), released and
-deployed on Vercel with "Protect Master" ruleset active. PR #2 (promo)
-merged. Branch `claude/shademate-ecommerce-build-7780kf` still carries:
-real photos/videos/logo + vector logo + favicon — needs one more PR.
+**Status: 🟢 LIVE AND SELLING.** Full pipeline verified with real money:
+checkout (launch pricing) → Stripe payment → webhook → order stored in
+Neon → notification email delivered to owner. PRs #1–#10 merged.
+Tags: v1.0, v1.1. Suggested next tag: `v1.2-2026-06-10`.
 
-Launch pending: final PR merge, Stripe keys in Vercel, webhook endpoint.
+Production config: $15.99 launch special (98/100 remaining — 2 test
+orders), normal $25, 3 for $60, 5 for $100 + free postage. Shared
+Stripe account (Togogo/Mathly) with ShadeMate guards + SHADEMATE
+statement suffix. Resend domain shademate.xyz verified; order emails
+to sfrench71@me.com from orders@shademate.xyz.
+
+Owner still to do: refund the two $25.94 test payments (Stripe →
+Payments); optionally delete the 2 test rows in Neon to restore the
+counter to 100/100 (`DELETE FROM orders;` in Neon SQL editor while the
+only rows are the tests).
 
 ## Session log
 
@@ -142,17 +151,25 @@ Built the entire site from scratch:
 - Owner also advised: Stripe mobile app push notifications for instant
   sale alerts
 
+### 2026-06-10 (launch night) — Live test verified 🟢
+
+- Owner completed all integrations from iPhone: Stripe keys (shared
+  account), webhook destination (API 2026-05-27.dahlia), Neon via Vercel
+  integration, Resend domain verified via Vercel integration
+- Two real test orders ($25.94 each, Apple Pay) placed
+- Debugging trail: webhook deliveries OK → orders initially missing →
+  resend backfilled DB → emails failing with Resend 422 (Vercel env UI
+  stripped angle brackets from ORDER_EMAILS_FROM) → fixed by normalizing
+  the from-address in code (#10) → resend → **email delivered** ✓
+- Also fixed: iPhone horizontal wobble (#9, overflow-x clip)
+- Pipeline proven end-to-end with real money
+
 ## Next steps
 
-1. Owner: merge `claude/stripe-neon-orders` PR after preview test
-2. Owner: connect Neon to the Vercel project (Vercel → Storage → Neon)
-   so DATABASE_URL is injected, update Stripe env vars to the new shop's
-   keys, add webhook endpoint `https://shademate.xyz/api/webhook` for
-   `checkout.session.completed`, put the new `whsec_...` in Vercel,
-   redeploy
-3. Test the full loop with Stripe TEST keys first: checkout → pay with
-   4242 4242 4242 4242 → success page → order row appears in Neon
-4. Owner: confirm/replace contact email in `src/config/site.ts`
-5. Future session: order-notification email from the webhook (fulfilment
-   hand-off to dropship business); simple orders dashboard; real Google
-   reviews; print artwork branding decision
+1. Owner: refund both test payments; optionally clear test rows in Neon
+2. Owner: tag `v1.2-2026-06-10` — "Stable: live checkout, launch
+   pricing, orders + email notifications"
+3. Future session ideas: customer-facing order confirmation email;
+   simple owner orders dashboard (mark fulfilled); real Google reviews
+   into config; abandoned-checkout follow-up; print artwork branding
+   decision for the physical cover
