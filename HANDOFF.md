@@ -128,6 +128,20 @@ Built the entire site from scratch:
 - ⚠️ Other shops' webhooks will also receive ShadeMate events — owner to
   confirm Togogo/Mathly handlers ignore foreign sessions
 
+### 2026-06-10 (Stripe live) — Webhook compat + order emails (branches: `claude/webhook-shipping-compat`, `claude/order-email-notifications`)
+
+- Stripe endpoint created by owner (API 2026-05-27.dahlia, snapshot
+  payload, checkout.session.completed only) — settings verified ✓
+- Compat fix: new API versions moved the shipping address to
+  `collected_information.shipping_details`; webhook reads new + legacy
+- Order notification emails via Resend (`src/lib/notify.ts`): plain-text
+  email with ship-to block ready to forward to the dropship business.
+  Needs RESEND_API_KEY + ORDER_NOTIFICATIONS_EMAIL in Vercel; skips
+  quietly if unset. Sends from onboarding@resend.dev until the domain is
+  verified in Resend (fine — can only send to owner's own email anyway).
+- Owner also advised: Stripe mobile app push notifications for instant
+  sale alerts
+
 ## Next steps
 
 1. Owner: merge `claude/stripe-neon-orders` PR after preview test

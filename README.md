@@ -24,6 +24,8 @@ Environment Variables**:
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Same page (`pk_live_...` / `pk_test_...`) |
 | `STRIPE_WEBHOOK_SECRET` | Created when you add the webhook endpoint (see below) |
 | `DATABASE_URL` | Injected automatically by the Vercel ↔ Neon integration (Vercel → Storage → connect Neon). Stores orders and drives the launch-special counter. |
+| `RESEND_API_KEY` | [resend.com](https://resend.com) → API Keys (free tier). Powers order notification emails. Optional — without it orders are still stored/visible in Stripe. |
+| `ORDER_NOTIFICATIONS_EMAIL` | The email address that receives each order, formatted ready to forward to fulfilment. Must match your Resend account email until you verify a domain in Resend. |
 | `NEXT_PUBLIC_SITE_URL` | `https://shademate.xyz` in production, `http://localhost:3000` locally |
 
 ## Pricing & deals — all in `src/config/site.ts`
