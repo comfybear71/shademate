@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { insertOrder } from "@/lib/db";
-import { sendOrderNotification } from "@/lib/notify";
+import { sendOrderNotification, sendCustomerConfirmation } from "@/lib/notify";
 
 /**
  * Stripe webhook endpoint — point your Stripe webhook at
@@ -96,21 +96,27 @@ export async function POST(req: NextRequest) {
         console.error("⚠️ Order insert failed for", session.id, err);
       }
 
-      // Email the owner — independent of the DB insert so a database
-      // hiccup never silences the notification (and vice versa).
+      // Emails — each independent of the DB insert and of each other,
+      // so one failure never silences the rest.
+      const emailPayload = {
+        sessionId: session.id,
+        name: session.customer_details?.name ?? null,
+        email: session.customer_details?.email ?? null,
+        phone: session.customer_details?.phone ?? null,
+        shippingAddress,
+        quantity,
+        totalCents: amountTotal,
+        launchSpecial: session.metadata?.launch_special === "true",
+      };
       try {
-        await sendOrderNotification({
-          sessionId: session.id,
-          name: session.customer_details?.name ?? null,
-          email: session.customer_details?.email ?? null,
-          phone: session.customer_details?.phone ?? null,
-          shippingAddress,
-          quantity,
-          totalCents: amountTotal,
-          launchSpecial: session.metadata?.launch_special === "true",
-        });
+        await sendOrderNotification(emailPayload);
       } catch (err) {
         console.error("⚠️ Order email failed for", session.id, err);
+      }
+      try {
+        await sendCustomerConfirmation(emailPayload);
+      } catch (err) {
+        console.error("⚠️ Customer email failed for", session.id, err);
       }
       break;
     }

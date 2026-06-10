@@ -169,7 +169,16 @@ Built the entire site from scratch:
 1. Owner: refund both test payments; optionally clear test rows in Neon
 2. Owner: tag `v1.2-2026-06-10` — "Stable: live checkout, launch
    pricing, orders + email notifications"
-3. Future session ideas: customer-facing order confirmation email;
-   simple owner orders dashboard (mark fulfilled); real Google reviews
-   into config; abandoned-checkout follow-up; print artwork branding
-   decision for the physical cover
+3. Future session ideas: simple owner orders dashboard (mark
+   fulfilled); real Google reviews into config; abandoned-checkout
+   follow-up; print artwork branding decision for the physical cover
+
+### 2026-06-10 (post-launch) — Customer confirmation email
+
+- Webhook now also emails the CUSTOMER a branded confirmation from
+  orders@shademate.xyz: Aussie-tone thanks, order summary, ship-to,
+  delivery estimate, reply-to hello@shademate.xyz, ABN footer
+- Success page wording fixed ("confirmation email" — Stripe receipts
+  stay OFF; they'd carry the shared account's ToGoGo branding)
+- Owner + customer emails are independent — one failing never blocks
+  the other
