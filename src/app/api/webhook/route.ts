@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { insertOrder } from "@/lib/db";
+import { sendOrderNotification } from "@/lib/notify";
 
 /**
  * Stripe webhook endpoint — point your Stripe webhook at
@@ -93,6 +94,23 @@ export async function POST(req: NextRequest) {
         // Log loudly but still 200 — the payment succeeded; the order is
         // recoverable from the Stripe dashboard if the insert failed.
         console.error("⚠️ Order insert failed for", session.id, err);
+      }
+
+      // Email the owner — independent of the DB insert so a database
+      // hiccup never silences the notification (and vice versa).
+      try {
+        await sendOrderNotification({
+          sessionId: session.id,
+          name: session.customer_details?.name ?? null,
+          email: session.customer_details?.email ?? null,
+          phone: session.customer_details?.phone ?? null,
+          shippingAddress,
+          quantity,
+          totalCents: amountTotal,
+          launchSpecial: session.metadata?.launch_special === "true",
+        });
+      } catch (err) {
+        console.error("⚠️ Order email failed for", session.id, err);
       }
       break;
     }
