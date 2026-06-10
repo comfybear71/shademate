@@ -54,6 +54,13 @@ export async function sendOrderNotification(order: OrderEmail): Promise<void> {
     return;
   }
 
+  // With shademate.xyz verified in Resend, set ORDER_EMAILS_FROM to e.g.
+  // "ShadeMate Orders <orders@shademate.xyz>". The resend.dev fallback
+  // works without verification but only delivers to your own account email.
+  const from =
+    process.env.ORDER_EMAILS_FROM ??
+    "ShadeMate Orders <onboarding@resend.dev>";
+
   const address = formatAddress(order.shippingAddress);
   const total = formatAud(order.totalCents / 100);
   const subject = `🎉 ShadeMate order — ${order.quantity}× cover, ${total}`;
@@ -82,7 +89,7 @@ export async function sendOrderNotification(order: OrderEmail): Promise<void> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "ShadeMate Orders <onboarding@resend.dev>",
+      from,
       to: [to],
       subject,
       text,
