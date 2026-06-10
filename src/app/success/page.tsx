@@ -23,7 +23,7 @@ export default function SuccessPage() {
           </h1>
           <p className="mt-4 text-slate-600">
             Your order is confirmed and we&apos;ll get it packed and shipped
-            quick smart. A receipt from Stripe is headed to your inbox. Any
+            quick smart. A confirmation email is headed to your inbox. Any
             questions, email{" "}
             <a
               href={`mailto:${siteConfig.contactEmail}`}

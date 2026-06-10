@@ -1,4 +1,4 @@
-import { formatAud } from "@/config/site";
+import { formatAud, product, siteConfig } from "@/config/site";
 
 /**
  * Emails the owner about each new order via Resend (https://resend.com).
@@ -62,6 +62,70 @@ function formatAddress(shipping: unknown): string {
   return [s.name, a.line1, a.line2, `${a.city ?? ""} ${a.state ?? ""} ${a.postal_code ?? ""}`.trim(), a.country]
     .filter(Boolean)
     .join("\n");
+}
+
+/**
+ * Branded order confirmation to the customer. Requires a verified
+ * domain in Resend (sending to arbitrary addresses) — shademate.xyz is
+ * verified, so this sends from orders@shademate.xyz.
+ */
+export async function sendCustomerConfirmation(order: OrderEmail): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || !order.email) {
+    console.log("Customer email skipped (no RESEND_API_KEY or customer email)");
+    return;
+  }
+
+  const address = formatAddress(order.shippingAddress);
+  const total = formatAud(order.totalCents / 100);
+  const firstName = order.name?.split(" ")[0] ?? "legend";
+
+  const text = [
+    `G'day ${firstName},`,
+    ``,
+    `Thanks a million for your order — your aircon's new best mate is on the way!`,
+    ``,
+    `Your order:`,
+    `  ${order.quantity} × ${product.name}`,
+    `  Total paid: ${total}`,
+    ``,
+    `Shipping to:`,
+    address,
+    ``,
+    `We'll pack it up and get it moving within 1-2 business days. Typical`,
+    `delivery is 3-10 business days depending on where you are in this big`,
+    `beautiful country.`,
+    ``,
+    `Questions about your order? Just reply to this email or contact us at`,
+    `${siteConfig.contactEmail} and we'll sort you out quick smart.`,
+    ``,
+    `Cheers,`,
+    `The ShadeMate team`,
+    `${siteConfig.url}`,
+    ``,
+    `${siteConfig.company.legalName} · ABN ${siteConfig.company.abn}`,
+  ].join("\n");
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: fromAddress(),
+      to: [order.email],
+      reply_to: siteConfig.contactEmail,
+      subject: `Your ShadeMate order is confirmed 🎉 (${order.quantity}× cover)`,
+      text,
+    }),
+  });
+
+  if (!res.ok) {
+    console.error("Customer email failed:", res.status, await res.text());
+  } else {
+    console.log("📧 Customer confirmation sent for", order.sessionId);
+  }
 }
 
 export async function sendOrderNotification(order: OrderEmail): Promise<void> {
