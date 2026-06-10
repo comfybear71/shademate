@@ -78,6 +78,11 @@ export async function POST(req: NextRequest) {
         },
       ],
       phone_number_collection: { enabled: true },
+      // Shared Stripe account: make card statements show ShadeMate
+      // after the account's descriptor prefix.
+      payment_intent_data: {
+        statement_descriptor_suffix: "SHADEMATE",
+      },
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancelled`,
       metadata: {

@@ -116,6 +116,18 @@ Built the entire site from scratch:
   orders can't be counted)
 - Decision: NO Stripe dashboard products/coupons — everything in code
 
+### 2026-06-10 (Stripe setup) — Shared-account guards (branch: `claude/shared-stripe-account-guards`)
+
+- Owner is using the EXISTING shared Stripe account (also runs Togogo +
+  Mathly webhooks) and connected Neon. Keys already in Vercel.
+- Webhook now ignores checkout sessions without
+  `metadata.product === "ShadeMate"` — prevents other shops' orders
+  polluting the orders table / burning the launch-special counter
+- Checkout sets `statement_descriptor_suffix: "SHADEMATE"` so card
+  statements identify the purchase despite the shared account
+- ⚠️ Other shops' webhooks will also receive ShadeMate events — owner to
+  confirm Togogo/Mathly handlers ignore foreign sessions
+
 ## Next steps
 
 1. Owner: merge `claude/stripe-neon-orders` PR after preview test
