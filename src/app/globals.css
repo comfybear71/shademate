@@ -6,6 +6,14 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Anything that pokes past the viewport (starbursts etc.) must never
+     widen the page — stops the iOS horizontal wobble. `clip` keeps
+     position:sticky working where `hidden` would break it. */
+  html,
+  body {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
   body {
     @apply bg-white text-slate-800 font-body antialiased;
   }
