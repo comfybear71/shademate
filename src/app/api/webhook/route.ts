@@ -55,7 +55,21 @@ export async function POST(req: NextRequest) {
       const quantity = Number(session.metadata?.quantity) || 1;
       const amountTotal = session.amount_total ?? 0;
       const shippingCents =
-        session.shipping_cost?.amount_total ?? 0;
+        session.shipping_cost?.amount_total ??
+        session.total_details?.amount_shipping ??
+        0;
+
+      // Newer Stripe API versions (2025+) moved the shipping address to
+      // collected_information.shipping_details; older ones use
+      // shipping_details. The endpoint is on 2026-05-27.dahlia, so check
+      // the new home first.
+      const sessionData = session as Stripe.Checkout.Session & {
+        collected_information?: { shipping_details?: unknown };
+      };
+      const shippingAddress =
+        sessionData.collected_information?.shipping_details ??
+        session.shipping_details ??
+        null;
 
       try {
         await insertOrder({
@@ -63,7 +77,7 @@ export async function POST(req: NextRequest) {
           email: session.customer_details?.email ?? null,
           name: session.customer_details?.name ?? null,
           phone: session.customer_details?.phone ?? null,
-          shippingAddress: session.shipping_details ?? null,
+          shippingAddress,
           quantity,
           unitPriceCents: Math.round((amountTotal - shippingCents) / quantity),
           amountTotalCents: amountTotal,
