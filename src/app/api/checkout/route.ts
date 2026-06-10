@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
-import { product, siteConfig, audToCents } from "@/config/site";
+import { countOrders } from "@/lib/db";
+import { getPricing } from "@/lib/pricing";
+import { product, siteConfig, audToCents, formatAud } from "@/config/site";
 
 export async function POST(req: NextRequest) {
   let quantity = 1;
@@ -22,6 +24,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Authoritative price — computed server-side from config + order count,
+  // never from anything the client sends.
+  const ordersSoFar = await countOrders();
+  const pricing = getPricing(quantity, ordersSoFar);
+
+  const dealNote = pricing.launchActive
+    ? product.launchSpecial.label
+    : pricing.dealLabel;
+
   const origin =
     req.headers.get("origin") ??
     process.env.NEXT_PUBLIC_SITE_URL ??
@@ -35,10 +46,12 @@ export async function POST(req: NextRequest) {
           quantity,
           price_data: {
             currency: product.currency.toLowerCase(),
-            unit_amount: audToCents(product.priceAud),
+            unit_amount: audToCents(pricing.unitPriceAud),
             product_data: {
               name: product.name,
-              description: product.dimensions,
+              description: dealNote
+                ? `${dealNote} · ${product.dimensions}`
+                : product.dimensions,
             },
           },
         },
@@ -50,9 +63,11 @@ export async function POST(req: NextRequest) {
         {
           shipping_rate_data: {
             type: "fixed_amount",
-            display_name: "Flat-rate shipping (Australia wide)",
+            display_name: pricing.freeShipping
+              ? "FREE shipping (5+ deal, Australia wide)"
+              : "Flat-rate shipping (Australia wide)",
             fixed_amount: {
-              amount: audToCents(product.shippingAud),
+              amount: audToCents(pricing.shippingAud),
               currency: product.currency.toLowerCase(),
             },
             delivery_estimate: {
@@ -68,6 +83,8 @@ export async function POST(req: NextRequest) {
       metadata: {
         product: product.shortName,
         quantity: String(quantity),
+        unit_price_aud: formatAud(pricing.unitPriceAud),
+        launch_special: String(pricing.launchActive),
       },
     });
 

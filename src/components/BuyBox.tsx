@@ -1,21 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import {
-  product,
-  formatAud,
-  sale,
-  saleSavings,
-  saleSavingsPercent,
-} from "@/config/site";
+import { useEffect, useState } from "react";
+import { product, formatAud } from "@/config/site";
+import { getPricing } from "@/lib/pricing";
 import Starburst from "./Starburst";
 
 export default function BuyBox() {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // null = unknown (treat as not active so we never over-promise)
+  const [ordersRemaining, setOrdersRemaining] = useState<number | null>(null);
+  const [launchActive, setLaunchActive] = useState(false);
 
-  const subtotal = product.priceAud * quantity;
+  useEffect(() => {
+    fetch("/api/pricing?quantity=1")
+      .then((res) => res.json())
+      .then((data) => {
+        setLaunchActive(Boolean(data.launchActive));
+        setOrdersRemaining(data.ordersRemaining ?? null);
+      })
+      .catch(() => {
+        // Pricing display falls back to normal prices; checkout still
+        // computes the real price server-side.
+      });
+  }, []);
+
+  const pricing = getPricing(quantity, launchActive ? 0 : null);
 
   async function handleCheckout() {
     setLoading(true);
@@ -43,14 +54,14 @@ export default function BuyBox() {
     <section id="buy" className="bg-gradient-to-b from-white to-ocean-50/60 py-16 sm:py-20">
       <div className="mx-auto max-w-2xl px-4 sm:px-6">
         <div className="relative rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-100 sm:p-10">
-          {sale.enabled && (
+          {launchActive && (
             <Starburst
-              lines={["SAVE", formatAud(saleSavings()), `${saleSavingsPercent()}% OFF`]}
+              lines={[formatAud(product.launchSpecial.unitPriceAud), "EACH!"]}
               className="absolute -right-4 -top-8 h-28 w-28 animate-wiggle drop-shadow-lg sm:-right-8 sm:-top-10 sm:h-32 sm:w-32"
             />
           )}
           <p className="inline-flex rounded-full bg-sun-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sun-600">
-            Free of fuss · Flat-rate shipping
+            Delivered Australia wide
           </p>
           <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-slate-900">
             {product.name}
@@ -60,27 +71,50 @@ export default function BuyBox() {
           </p>
           <p className="mt-2 text-xs text-slate-500">{product.dimensions}</p>
 
+          {/* Price */}
           <div className="mt-6 flex flex-wrap items-end gap-x-3 gap-y-1">
-            {sale.enabled && (
-              <span className="pb-1 text-xl font-semibold text-slate-400 line-through decoration-red-500 decoration-2">
-                {formatAud(sale.rrpAud)}
-              </span>
-            )}
             <span
-              className={`font-display text-5xl font-extrabold ${sale.enabled ? "text-red-600" : "text-slate-900"}`}
+              className={`font-display text-5xl font-extrabold ${launchActive ? "text-red-600" : "text-slate-900"}`}
             >
-              {formatAud(product.priceAud)}
+              {formatAud(pricing.unitPriceAud)}
             </span>
             <span className="pb-1 text-sm text-slate-500">
-              AUD + {formatAud(product.shippingAud)} flat-rate shipping
+              each
+              {launchActive &&
+                ` — normally ${formatAud(product.priceAud)}`}
             </span>
           </div>
-          {sale.enabled && (
+
+          {launchActive && (
             <p className="mt-2 inline-flex items-center gap-2 rounded-lg bg-yellow-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-red-700 ring-1 ring-yellow-300">
-              ⚡ {sale.badgeText} — save {formatAud(saleSavings())} (
-              {saleSavingsPercent()}% off)
+              🔥 {product.launchSpecial.label}
+              {ordersRemaining !== null && ordersRemaining <= 50 && (
+                <span>· only {ordersRemaining} left!</span>
+              )}
             </p>
           )}
+
+          {/* Multi-buy deals */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {product.bundles
+              .slice()
+              .reverse()
+              .map((bundle) => (
+                <button
+                  key={bundle.minQty}
+                  type="button"
+                  onClick={() => setQuantity(bundle.minQty)}
+                  className={`rounded-full px-4 py-2 text-sm font-bold ring-1 transition ${
+                    quantity >= bundle.minQty &&
+                    pricing.dealLabel === bundle.label
+                      ? "bg-ocean-700 text-white ring-ocean-700"
+                      : "bg-white text-ocean-700 ring-ocean-200 hover:bg-ocean-50"
+                  }`}
+                >
+                  {bundle.label}
+                </button>
+              ))}
+          </div>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center rounded-full ring-1 ring-slate-200">
@@ -120,19 +154,24 @@ export default function BuyBox() {
             >
               {loading
                 ? "Heading to checkout…"
-                : `Checkout — ${formatAud(subtotal)}`}
+                : `Checkout — ${formatAud(pricing.totalAud)}`}
             </button>
           </div>
+
+          {/* Order summary line */}
+          <p className="mt-3 text-center text-sm text-slate-500" aria-live="polite">
+            {quantity} × {formatAud(pricing.unitPriceAud)} ={" "}
+            {formatAud(pricing.subtotalAud)} +{" "}
+            {pricing.freeShipping ? (
+              <span className="font-bold text-green-600">FREE postage 🎉</span>
+            ) : (
+              `${formatAud(pricing.shippingAud)} postage`
+            )}
+          </p>
 
           {error && (
             <p role="alert" className="mt-4 text-sm font-semibold text-red-600">
               {error}
-            </p>
-          )}
-
-          {sale.enabled && (
-            <p className="mt-4 text-center text-sm font-bold text-red-600">
-              🔥 {sale.bannerText}
             </p>
           )}
 

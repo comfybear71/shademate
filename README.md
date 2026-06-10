@@ -23,7 +23,28 @@ Environment Variables**:
 | `STRIPE_SECRET_KEY` | [Stripe Dashboard → Developers → API keys](https://dashboard.stripe.com/apikeys) (`sk_live_...` in production, `sk_test_...` for testing) |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Same page (`pk_live_...` / `pk_test_...`) |
 | `STRIPE_WEBHOOK_SECRET` | Created when you add the webhook endpoint (see below) |
+| `DATABASE_URL` | Injected automatically by the Vercel ↔ Neon integration (Vercel → Storage → connect Neon). Stores orders and drives the launch-special counter. |
 | `NEXT_PUBLIC_SITE_URL` | `https://shademate.xyz` in production, `http://localhost:3000` locally |
+
+## Pricing & deals — all in `src/config/site.ts`
+
+- `product.priceAud` — normal price (currently $25)
+- `product.bundles` — multi-buy deals (3 for $60 · 5 for $100 + free postage)
+- `product.launchSpecial` — intro price ($15.99) that automatically ends
+  after `maxOrders` (100) orders exist in the database
+
+No Stripe dashboard products or coupons needed — the checkout API
+computes the authoritative price server-side from config + order count.
+Without a `DATABASE_URL` the site safely falls back to normal pricing
+(the intro deal is never shown if orders can't be counted).
+
+## Orders
+
+Every paid order is stored in the Neon `orders` table by the webhook
+(table is auto-created on first use). View them in the Neon console
+(SQL: `SELECT * FROM orders ORDER BY created_at DESC`) or in the Stripe
+dashboard under Payments. The same table powers the "first 100 orders"
+launch-special cutoff.
 
 ## Editing prices, copy and links — one file
 
