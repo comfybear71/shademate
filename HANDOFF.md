@@ -81,6 +81,20 @@ Built the entire site from scratch:
 - NOTE: the physical cover in the product photos still prints "Aussie
   Shade Mate / Protect Your Cool" — owner to decide on print artwork
 
+### 2026-06-10 (late) — Real price set (branch: `claude/price-update-25aud`)
+
+- v1.1 content (media, posters, vector logo) merged via PR #3 and live
+- Price corrected to the real selling price: **$25** (was placeholder
+  $49.95); shipping unchanged at $9.95 flat
+- Sale promo DISABLED: no genuine "was" price exists yet (real price is
+  $25, so "was $69.95" would be a fake discount under ACL). Re-enable in
+  the `sale` block with a genuine prior price later.
+- Owner notes (discussion only, no code yet):
+  - Wants a multi-buy deal — roughly "3 for $60" — exact tiers TBD
+  - Landed cost ~US$3–5/unit
+  - Fulfilment: owner has a separate dropshipping business that can ship
+    orders manually from the webhook order emails — no integration needed
+
 ## Next steps
 
 1. Owner: merge the final media+logo PR, delete branch, tag

@@ -35,7 +35,7 @@ export const product = {
     "Reflective, non-flammable cover for split-system outdoor air conditioner units. Shields the top of your unit from sun, dust, leaves and bird droppings without blocking airflow — helping your unit run more efficiently by reflecting heat. Fits in under a minute, no tools needed.",
 
   /** Price in whole AUD dollars. Change it here, done. */
-  priceAud: 49.95,
+  priceAud: 25,
 
   /** Flat-rate shipping in whole AUD dollars (Australia wide). */
   shippingAud: 9.95,
@@ -90,10 +90,16 @@ export const product = {
  * Consumer Law.
  */
 export const sale = {
-  enabled: true,
+  /**
+   * Off until there's a genuine "was" price: the real selling price is
+   * $25, so claiming "was $69.95" would be a fake discount. Once you've
+   * sold at $25 for a while you can run e.g. "was $25 now $20" promos —
+   * set rrpAud to the genuine prior price and flip this back on.
+   */
+  enabled: false,
 
   /** The "was" price in AUD. Customers pay product.priceAud. */
-  rrpAud: 69.95,
+  rrpAud: 25,
 
   /** Short shouty label on the starburst, e.g. "LAUNCH SPECIAL". */
   badgeText: "LAUNCH SPECIAL",
