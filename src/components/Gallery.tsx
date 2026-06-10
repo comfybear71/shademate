@@ -4,11 +4,16 @@ import path from "path";
 import { product } from "@/config/site";
 
 /**
- * Renders the gallery from product.images in src/config/site.ts.
- * Images that exist in /public render normally; missing files render
- * as styled placeholders so the layout is ready before photos are added.
+ * Renders the gallery from product.images / product.videos in
+ * src/config/site.ts. Images that exist in /public render normally;
+ * missing files render as styled placeholders so the layout is ready
+ * before photos are added.
  */
 export default function Gallery() {
+  const existingVideos = product.videos.filter((video) =>
+    fs.existsSync(path.join(process.cwd(), "public", video.src)),
+  );
+
   return (
     <section id="gallery" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <h2 className="text-center font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -53,6 +58,26 @@ export default function Gallery() {
           );
         })}
       </div>
+
+      {existingVideos.length > 0 && (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {existingVideos.map((video) => (
+            <div key={video.src} className="overflow-hidden rounded-2xl bg-slate-900">
+              <video
+                controls
+                muted
+                playsInline
+                preload="metadata"
+                className="h-full w-full"
+                aria-label={video.title}
+              >
+                <source src={video.src} type="video/mp4" />
+                Your browser doesn&apos;t support video playback.
+              </video>
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

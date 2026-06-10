@@ -56,6 +56,17 @@ Built the entire site from scratch:
 - Flip `sale.enabled = false` to turn the whole promo off site-wide
 - Verified: build clean, all promo elements render
 
+### 2026-06-10 (evening) — Real media in (same branch)
+
+- Owner uploaded 6 photos + 2 videos via GitHub web; renamed:
+  `product-1.jpg`…`product-5.jpg` (1 = branded hero shot), `logo.jpg`,
+  `video-1.mp4`, `video-2.mp4`; `og-image.jpg` = copy of product-2
+- Logo.tsx now renders the real logo image (public/images/logo.jpg)
+  instead of the placeholder SVG
+- Gallery: 5 photo slots with real alt text + videos render below the
+  photo grid in a 2-up row (`product.videos` in config)
+- NOTE: PR #2 (this branch → master) now contains promo + media + logo
+
 ## Next steps
 
 1. Owner: open + merge the PR (link in session notes), then on GitHub web:
