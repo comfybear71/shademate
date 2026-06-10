@@ -57,7 +57,7 @@ export default function BuyBox() {
           {launchActive && (
             <Starburst
               lines={[formatAud(product.launchSpecial.unitPriceAud), "EACH!"]}
-              className="absolute -right-4 -top-8 h-28 w-28 animate-wiggle drop-shadow-lg sm:-right-8 sm:-top-10 sm:h-32 sm:w-32"
+              className="absolute -right-2 -top-8 h-28 w-28 animate-wiggle drop-shadow-lg sm:-right-8 sm:-top-10 sm:h-32 sm:w-32"
             />
           )}
           <p className="inline-flex rounded-full bg-sun-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sun-600">
