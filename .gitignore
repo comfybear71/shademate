@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 
 # Keep the env template in git
 !.env.example
+.vercel
+.env*

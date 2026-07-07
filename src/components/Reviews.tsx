@@ -44,8 +44,8 @@ export default function Reviews() {
             </figure>
           ))}
         </div>
-        <div className="mt-10 text-center">
-          {siteConfig.googleReviewLink ? (
+        {siteConfig.googleReviewLink ? (
+          <div className="mt-10 text-center">
             <a
               href={siteConfig.googleReviewLink}
               target="_blank"
@@ -54,13 +54,8 @@ export default function Reviews() {
             >
               ⭐ Review us on Google
             </a>
-          ) : (
-            <p className="text-sm text-slate-400">
-              {/* Add your Google review link in src/config/site.ts to show the button here */}
-              ⭐ Google review link coming soon
-            </p>
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );

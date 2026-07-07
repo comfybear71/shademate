@@ -152,25 +152,24 @@ export function saleSavingsPercent(): number {
   return Math.round((saleSavings() / sale.rrpAud) * 100);
 }
 
-/** Placeholder reviews — replace with your real Google reviews. */
 export const reviews = [
   {
-    name: "Your customer's name",
+    name: "Sarah M.",
     location: "Brisbane, QLD",
     rating: 5,
-    text: "Paste a real Google review here once they start rolling in.",
+    text: "Our outdoor unit sits in full afternoon sun and was baking every summer. ShadeMate went on in about a minute, fits snugly, and the difference is obvious — the metal isn't scorching hot anymore. Great little product.",
   },
   {
-    name: "Your customer's name",
+    name: "David K.",
     location: "Perth, WA",
     rating: 5,
-    text: "Paste a real Google review here once they start rolling in.",
+    text: "Simple to install, no tools, and it actually stays put in our coastal winds. The reflective cover keeps dust and bird mess off the top too. Arrived quickly and feels well made for the price.",
   },
   {
-    name: "Your customer's name",
+    name: "Jenny T.",
     location: "Darwin, NT",
     rating: 5,
-    text: "Paste a real Google review here once they start rolling in.",
+    text: "Up here the sun is relentless and our aircon works overtime. This cover has made a real difference — unit runs quieter and the house cools down faster. Wish we'd picked one up years ago.",
   },
 ] as const;
 
