@@ -18,6 +18,9 @@ export default function Header() {
           <Link href="/#faq" className="hover:text-ocean-700">
             FAQ
           </Link>
+          <Link href="/guides" className="hover:text-ocean-700">
+            Guides
+          </Link>
           <Link href="/#contact" className="hover:text-ocean-700">
             Contact
           </Link>
