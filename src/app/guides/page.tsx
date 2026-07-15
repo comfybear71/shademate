@@ -16,6 +16,12 @@ const guides = [
     blurb:
       "Sun, dust, and bird mess vs a reflective top-only cover that keeps airflow clear.",
   },
+  {
+    href: "/guides/snap-it-on-in-60-seconds",
+    title: "Snap It On in 60 Seconds (video script)",
+    blurb:
+      "Short-form shoot script — backyard install, no tools, point them to shademate.xyz.",
+  },
 ];
 
 export default function GuidesIndexPage() {
