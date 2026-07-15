@@ -25,6 +25,19 @@ export default function Footer() {
             </h3>
             <ul className="mt-4 space-y-2 text-sm">
               <li>
+                <Link href="/guides" className="hover:text-white">
+                  Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guides/why-outdoor-aircon-needs-shade-cover"
+                  className="hover:text-white"
+                >
+                  Aircon shade cover guide
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="hover:text-white">
                   Privacy Policy
                 </Link>
