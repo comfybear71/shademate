@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const guides = [
+  /* COMFYMART_GUIDES */
   {
     href: "/guides/why-outdoor-aircon-needs-shade-cover",
     title: "Why Your Outdoor Aircon Unit Needs a Shade Cover",
@@ -21,6 +22,12 @@ const guides = [
     title: "Snap It On in 60 Seconds (video script)",
     blurb:
       "Short-form shoot script — backyard install, no tools, point them to shademate.xyz.",
+  },
+  {
+    href: "/guides/pillar-page-best-way-to-protect-your-outdoor-aircon-unit-in-",
+    title: "Best Way to Protect Your Outdoor Aircon Unit in Australia",
+    blurb:
+      "Draft SEO pillar brief — expand before treating as the finished long-form guide.",
   },
 ];
 
@@ -47,5 +54,3 @@ export default function GuidesIndexPage() {
     </LegalPage>
   );
 }
-
-// ComfyMart guide: [Pillar Page: Best Way to Protect Your Outdoor Aircon Unit in Australia](/guides/pillar-page-best-way-to-protect-your-outdoor-aircon-unit-in-)
