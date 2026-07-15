@@ -47,3 +47,5 @@ export default function GuidesIndexPage() {
     </LegalPage>
   );
 }
+
+// ComfyMart guide: [Pillar Page: Best Way to Protect Your Outdoor Aircon Unit in Australia](/guides/pillar-page-best-way-to-protect-your-outdoor-aircon-unit-in-)
