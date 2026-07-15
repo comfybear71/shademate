@@ -4,7 +4,6 @@ import LegalPage from "@/components/LegalPage";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const slug = "pillar-page-best-way-to-protect-your-outdoor-aircon-unit-in-";
 const title =
   "Best Way to Protect Your Outdoor Aircon Unit in Australia";
 const mdPath =
