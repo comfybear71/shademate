@@ -38,6 +38,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/guides/snap-it-on-in-60-seconds"
+                  className="hover:text-white"
+                >
+                  60-second install script
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="hover:text-white">
                   Privacy Policy
                 </Link>
